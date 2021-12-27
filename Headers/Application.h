@@ -1,0 +1,14 @@
+//
+// Created by helom on 26. 12. 2021.
+//
+
+#ifndef SEMESTRALKASERVER_APPLICATION_H
+#define SEMESTRALKASERVER_APPLICATION_H
+
+
+class Application {
+
+};
+
+
+#endif //SEMESTRALKASERVER_APPLICATION_H
