@@ -3,4 +3,4 @@ project(SemestralkaServer)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(SemestralkaServer main.cpp Sources/Application.cpp Headers/Application.h)
+add_executable(SemestralkaServer main.cpp Sources/Application.cpp Headers/Application.h Sources/User.cpp Headers/User.h)
