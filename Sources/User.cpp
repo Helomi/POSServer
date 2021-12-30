@@ -3,26 +3,37 @@
 //
 
 #include "../Headers/User.h"
+#include "../Headers/Application.h"
 
-User::User(int pnewsockfd) {
+User::User(int pnewsockfd, Application *pApplication, pthread_t *pVlakno) {
     newsockfd = pnewsockfd;
-    for (int i = 0; i < 1; ++i) {
-        bzero(buffer,256);
-        n = read(newsockfd, buffer, 255);
-        if (n < 0)
+    application = pApplication;
+    vlakno = pVlakno;
+}
+
+void *User::pracuj(void *data) {
+    User* user = (User*) data;
+    for (int i = 0; i < 5; ++i) {
+        bzero(user->buffer,256);
+        user->n = read(user->newsockfd, user->buffer, 255);
+        if (user->n < 0)
         {
             perror("Error reading from socket");
             exit(4);
         }
-        printf("Here is the message: %s\n", buffer);
+        printf("Here is the message: %s\n", user->buffer);
 
         string msg = "asdfgjkl|šdfghjkln|sfgdnjkl|END|";
-        n = write(newsockfd, msg.c_str(), strlen(msg.c_str())+1);
-        if (n < 0)
+        user->n = write(user->newsockfd, msg.c_str(), strlen(msg.c_str())+1);
+        if (user->n < 0)
         {
             perror("Error writing to socket");
             exit(5);
         }
     }
-    close(newsockfd);
+    close(user->newsockfd);
+}
+
+void User::zacniPracovat() {
+    pthread_create(vlakno, NULL, &User::pracuj, this);
 }

@@ -10,9 +10,10 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <unistd.h>
 #include <string>
+#include "Application.h"
 
 using namespace std;
 
@@ -23,8 +24,13 @@ private:
     int newsockfd;
     char buffer[256];
     int n;
+    Application *application;
+    pthread_t* vlakno;
+
 public:
-    User(int pnewsockfd);
+    User(int pnewsockfd, Application *pApplication, pthread_t *pInt);
+    void zacniPracovat();
+    static void *pracuj(void *data);
 };
 
 

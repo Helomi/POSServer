@@ -29,11 +29,15 @@ Application::Application(int argc, char *argv[]) {
         perror("Error binding socket address");
         exit(2);
     }
-
-
-
     listen(sockfd, 5);
     cli_len = sizeof(cli_addr);
+
+
+    int pocetUzivatelov = 5;
+    int i = 0;
+    User* users[pocetUzivatelov];
+    pthread_t* vlaknaUsers = new pthread_t[pocetUzivatelov];
+
     while (true) {
         newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &cli_len);
         if (newsockfd < 0)
@@ -41,7 +45,9 @@ Application::Application(int argc, char *argv[]) {
             perror("ERROR on accept");
             exit(3);
         }
-        User* user = new User(newsockfd);
+        users[i] = new User(newsockfd, this, &vlaknaUsers[i]);
+        users[i]->zacniPracovat();
+        i++;
     }
     close(sockfd);
 }
