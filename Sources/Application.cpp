@@ -2,8 +2,11 @@
 // Created by helom on 26. 12. 2021.
 //
 
+
+#include <iostream>
 #include "../Headers/Application.h"
 #include "../Headers/User.h"
+#include "../Headers/Server.h"
 
 Application::Application(int argc, char *argv[]) {
     if (argc < 2)
@@ -45,9 +48,41 @@ Application::Application(int argc, char *argv[]) {
             perror("ERROR on accept");
             exit(3);
         }
+        cout << "Pripaja sa uživateľ s ID: " << i << "\n";
         users[i] = new User(newsockfd, this, &vlaknaUsers[i]);
         users[i]->zacniPracovat();
         i++;
-    }
+    };
+    pthread_join(vlaknaUsers[i-1], NULL);
     close(sockfd);
 }
+
+bool Application::vytvorServer(string nazovServeru, int mapa, User* user) {
+    int i = 0;
+
+    while (servery[i] != nullptr)
+    {
+        i++;
+    }
+    if (i <= 0) {
+        servery[i] = new Server(nazovServeru, mapa, user, &vlaknaServer[i]);
+        servery[i]->zacniPracovat();
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+Server *Application::getServer(int id) {
+    if (servery[id] == nullptr) {
+        return nullptr;
+    } else {
+        return servery[id];
+    }
+
+}
+
+
+
+

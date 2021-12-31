@@ -3,6 +3,6 @@ project(SemestralkaServer)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(SemestralkaServer main.cpp Sources/Application.cpp Headers/Application.h Sources/User.cpp Headers/User.h)
+add_executable(SemestralkaServer main.cpp Sources/Application.cpp Headers/Application.h Sources/User.cpp Headers/User.h Sources/Server.cpp Headers/Server.h)
 
 target_link_libraries(SemestralkaServer pthread)
