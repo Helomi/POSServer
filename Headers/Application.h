@@ -17,6 +17,9 @@
 
 using namespace std;
 
+class User;
+class Server;
+
 class Application {
 private:
     pthread_mutex_t serverPole;
@@ -24,17 +27,16 @@ private:
     socklen_t cli_len;
     struct sockaddr_in serv_addr, cli_addr;
     int n;
+    Server* servery[2];
+    pthread_t* vlaknaServer = new pthread_t[10];
+
 public:
     Application(int argc, char *argv[]);
+    bool vytvorServer(string nazovServeru, int mapa, User* user);
+    Server* getServer(int id);
+
+
 };
 
 
 #endif //SEMESTRALKASERVER_APPLICATION_H
-cmake_minimum_required(VERSION 3.7.2)
-project(SemestralkaServer)
-
-set(CMAKE_CXX_STANDARD 17)
-
-add_executable(SemestralkaServer main.cpp Sources/Application.cpp Headers/Application.h Sources/User.cpp Headers/User.h)
-
-target_link_libraries(SemestralkaServer pthread)
