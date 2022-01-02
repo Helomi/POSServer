@@ -18,6 +18,8 @@ private:
     User* hrac1;
     User* hrac2;
     pthread_t* vlakno;
+    static bool vyhral(int x, int y, Server* server, char znak);
+    static bool tah(User* hrac, User* hrac2, Server* server, char znak);
 public:
     Server(string pNazovServeru, int pMapa, User* pHrac1, pthread_t* pVlakno);
     ~Server();
