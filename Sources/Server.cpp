@@ -36,7 +36,46 @@ void *Server::pracuj(void *data) {
         sleep(5);
     }
     cout << "Hráč sa pripojil zapíname hru!\n";
+    server->hrac1->odosliSpravu("STR|" + to_string(server->mapa));
+    server->hrac2->odosliSpravu("STR|" + to_string(server->mapa));
+    sleep(5);
+    server->hrac1->odosliSpravu("DTN|");
+    bool koniecZapasu = false;
+    while(!koniecZapasu) {
+        koniecZapasu = tah(server->hrac1, server->hrac2, server, 'O');
+        koniecZapasu = tah(server->hrac2, server->hrac1, server, 'X');
+    }
+
+
+
+
 }
+
+bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
+    string pomocna;
+    int x;
+    int y;
+    pomocna = hrac->primiSpravu();
+    stringstream check1(pomocna);
+    string pomocna2;
+    getline(check1, pomocna2, '|');
+    if (pomocna2.compare("UPD") == 0) {
+        getline(check1, pomocna2, '|');
+        x = stoi(pomocna2);
+        getline(check1, pomocna2, '|');
+        y = stoi(pomocna2);
+        server->pole[y][x] = znak;
+        if (vyhral(x, y, server, znak)) {
+            hrac2->odosliSpravu("LOS|" + to_string(x) + "|" + to_string(y));
+            hrac->odosliSpravu("WIN");
+            return true;
+        } else {
+            hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));
+        }
+    }
+    return false;
+}
+
 
 string Server::getNazovServeru() {
     return nazovServeru;
@@ -45,3 +84,140 @@ string Server::getNazovServeru() {
 void Server::pridajHraca(User* phrac2) {
     hrac2 = phrac2;
 }
+
+
+
+bool Server::vyhral(int x, int y, Server* server, char znak) {
+    // Kontola \ smeru
+    int x_ = x;
+    int y_ = y;
+    int rovnake = 1;
+    x_++;
+    y_++;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_++;
+        y_++;
+    }
+    x_ = x;
+    y_ = y;
+    x_--;
+    y_--;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_--;
+        y_--;
+    }
+    // Kontrola / smeru
+    x_ = x;
+    y_ = y;
+    rovnake = 1;
+    x_++;
+    y_--;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_++;
+        y_--;
+    }
+    x_ = x;
+    y_ = y;
+    x_--;
+    y_++;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_--;
+        y_++;
+    }
+
+    // Kontrola | smeru
+    x_ = x;
+    y_ = y;
+    rovnake = 1;
+    y_++;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        y_++;
+    }
+    x_ = x;
+    y_ = y;
+    y_--;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        y_--;
+    }
+    // Kontrola - smeru
+    x_ = x;
+    y_ = y;
+    rovnake = 1;
+    x_++;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_++;
+    }
+    x_ = x;
+    y_ = y;
+    x_--;
+    while(x_ < server->mapa && y_ < server->mapa && x_ >= 0 && y_ >= 0) {
+        if (server->pole[y_][x_] == znak) {
+            rovnake++;
+        } else {
+            break;
+        }
+        if (rovnake == 3) {
+            return true;
+        }
+        x_--;
+    }
+    return false;
+}
+
+
