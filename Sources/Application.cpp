@@ -59,7 +59,7 @@ Application::Application(int argc, char *argv[]) {
 
 bool Application::vytvorServer(string nazovServeru, int mapa, User* user) {
     int i = 0;
-
+    //
     while (servery[i] != nullptr)
     {
         i++;
