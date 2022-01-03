@@ -10,6 +10,7 @@
 Server::Server(string pNazovServeru, int pMapa, User* pHrac1, pthread_t* pVlakno) {
     nazovServeru = pNazovServeru;
     mapa = pMapa;
+    jePrazdny = true;
     hrac1 = pHrac1;
     vlakno = pVlakno;
     pole = new char* [pMapa];
@@ -70,9 +71,18 @@ bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
             hrac->setKoniec(true);
             return true;
         } else {
-            hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));
+            if (server->obsadenePolicka == (server->mapa * server->mapa)-1) {
+                hrac2->odosliSpravu("DRW|" + to_string(x) + "|" + to_string(y));
+                hrac->odosliSpravu("DRW");
+                hrac2->setKoniec(true);
+                hrac->setKoniec(true);
+                return true;
+            } else {
+                hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));
+            }
         }
     }
+    server->obsadenePolicka++;
     return false;
 }
 
@@ -81,8 +91,13 @@ string Server::getNazovServeru() {
     return nazovServeru;
 }
 
+bool Server::getJePrazdny() {
+    return jePrazdny;
+}
+
 void Server::pridajHraca(User* phrac2) {
     hrac2 = phrac2;
+    jePrazdny = false;
 }
 
 
@@ -219,5 +234,7 @@ bool Server::vyhral(int x, int y, Server* server, char znak) {
     }
     return false;
 }
+
+
 
 

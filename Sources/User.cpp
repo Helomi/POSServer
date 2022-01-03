@@ -45,12 +45,14 @@ void *User::pracuj(void *data) {
             int i = 0;
             string zoznamServerov;
             while (user->application->getServer(i) != nullptr) {
-                zoznamServerov += user->application->getServer(i)->getNazovServeru() + "|";
-                i++;
-                if (i%4 == 0) {
-                    user->odosliSpravu(zoznamServerov);
-                    cout << "Test msg: " << zoznamServerov << "\n";
-                    zoznamServerov = "";
+                if ( user->application->getServer(i)->getJePrazdny()) {
+                    zoznamServerov += user->application->getServer(i)->getNazovServeru() + "|";
+                    i++;
+                    if (i % 4 == 0) {
+                        user->odosliSpravu(zoznamServerov);
+                        cout << "Test msg: " << zoznamServerov << "\n";
+                        zoznamServerov = "";
+                    }
                 }
             }
             zoznamServerov += "END|";
