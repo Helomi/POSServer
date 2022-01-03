@@ -30,9 +30,13 @@ private:
     int n;
     Application *application;
     pthread_t* vlakno;
+    bool koniec = false;
+public:
+    void setKoniec(bool koniec);
 
 public:
     User(int pnewsockfd, Application *pApplication, pthread_t *pVlakno);
+    ~User();
     void zacniPracovat();
     static void *pracuj(void *data);
 

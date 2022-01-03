@@ -51,23 +51,28 @@ void *User::pracuj(void *data) {
                     user->odosliSpravu(zoznamServerov);
                     cout << "Test msg: " << zoznamServerov << "\n";
                     zoznamServerov = "";
-
                 }
             }
             zoznamServerov += "END|";
             user->odosliSpravu(zoznamServerov);
-            pomocna = user->primiSpravu();
-            cout << user->meno << ": " << pomocna << "\n";
+            if (i != 0) {
+                pomocna = user->primiSpravu();
+                cout << user->meno << ": " << pomocna << "\n";
+                stringstream check1(pomocna);
+                getline(check1, pomocna2, '|');
+                if (pomocna2.compare("JOI") == 0) {
+                    pripojeny = true;
+                    int idServeru;
+                    check1 >> idServeru;
+                    user->application->getServer(idServeru - 1)->pridajHraca(user);
+                }
+            } else {
 
-            stringstream check1(pomocna);
-            getline(check1, pomocna2, '|');
-            if (pomocna2.compare("JOI") == 0) {
-                pripojeny = true;
-                int idServeru;
-                check1 >> idServeru;
-                user->application->getServer(idServeru-1)->pridajHraca(user);
             }
         }
+    }
+    while(!user->koniec){
+        sleep(5);
     }
 }
 
@@ -103,3 +108,9 @@ char* User::primiSpravu() {
     }
     return buffer;
 }
+
+void User::setKoniec(bool koniec) {
+    User::koniec = koniec;
+}
+
+User::~User() {}

@@ -43,12 +43,10 @@ void *Server::pracuj(void *data) {
     bool koniecZapasu = false;
     while(!koniecZapasu) {
         koniecZapasu = tah(server->hrac1, server->hrac2, server, 'O');
-        koniecZapasu = tah(server->hrac2, server->hrac1, server, 'X');
+        if (!koniecZapasu) {
+            koniecZapasu = tah(server->hrac2, server->hrac1, server, 'X');
+        }
     }
-
-
-
-
 }
 
 bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
@@ -68,6 +66,8 @@ bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
         if (vyhral(x, y, server, znak)) {
             hrac2->odosliSpravu("LOS|" + to_string(x) + "|" + to_string(y));
             hrac->odosliSpravu("WIN");
+            hrac2->setKoniec(true);
+            hrac->setKoniec(true);
             return true;
         } else {
             hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));

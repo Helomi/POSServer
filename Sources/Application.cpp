@@ -34,27 +34,32 @@ Application::Application(int argc, char *argv[]) {
     }
     listen(sockfd, 5);
     cli_len = sizeof(cli_addr);
-
-
-    int pocetUzivatelov = 5;
     int i = 0;
-    User* users[pocetUzivatelov];
-    pthread_t* vlaknaUsers = new pthread_t[pocetUzivatelov];
 
-    while (true) {
-        newsockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &cli_len);
-        if (newsockfd < 0)
+    pthread_t* vlaknaUsers = new pthread_t[pocetUzivatelov];
+    int newsockfd[pocetUzivatelov];
+
+    while (i != 2) {
+        newsockfd[i] = accept(sockfd, (struct sockaddr*)&cli_addr, &cli_len);
+        if (newsockfd[i] < 0)
         {
             perror("ERROR on accept");
             exit(3);
         }
         cout << "Pripaja sa uživateľ s ID: " << i << "\n";
-        users[i] = new User(newsockfd, this, &vlaknaUsers[i]);
+        users[i] = new User(newsockfd[i], this, &vlaknaUsers[i]);
         users[i]->zacniPracovat();
         i++;
     };
-    pthread_join(vlaknaUsers[i-1], NULL);
+
+
+    for (int j = 0; j < pocetUzivatelov; ++j) {
+        pthread_join(vlaknaUsers[j], NULL);
+        close(newsockfd[j]);
+    }
+    pthread_join(vlaknaServer[0], NULL);
     close(sockfd);
+    delete[] vlaknaUsers;
 }
 
 bool Application::vytvorServer(string nazovServeru, int mapa, User* user) {
@@ -81,6 +86,16 @@ Server *Application::getServer(int id) {
         return servery[id];
     }
 
+}
+
+Application::~Application() {
+    for (int i = 0; i < pocetUzivatelov; ++i) {
+        delete users[i];
+    }
+    for (int i = 0; i < 2; ++i) {
+        delete servery[i];
+    }
+    delete[] vlaknaServer;
 }
 
 
