@@ -44,36 +44,50 @@ void *User::pracuj(void *data) {
         } else if (pomocna2.compare("DZL") == 0) {
             int i = 0;
             string zoznamServerov;
-            while (user->application->getServer(i) != nullptr) {
-                if ( user->application->getServer(i)->getJePrazdny()) {
-                    zoznamServerov += user->application->getServer(i)->getNazovServeru() + "|";
-                    i++;
-                    if (i % 4 == 0) {
-                        user->odosliSpravu(zoznamServerov);
-                        cout << "Test msg: " << zoznamServerov << "\n";
-                        zoznamServerov = "";
+            cout << "DZL DEBUG: Pred získaní zoznamu\n";
+            for (int j = 0; j < user->application->getPocetServerov(); ++j) {
+                if (user->application->getServer(j) != nullptr)
+                {
+                    if (user->application->getServer(j)->getJePrazdny()) {
+                        zoznamServerov += user->application->getServer(j)->getNazovServeru() + "|";
+                    } else {
+                        zoznamServerov += user->application->getServer(j)->getNazovServeru() + "#|";
                     }
+                    i++;
+                }
+                if (i % 4 == 0 && i != 0) {
+                    user->odosliSpravu(zoznamServerov);
+                    cout << "Test msg: " << zoznamServerov << "\n";
+                    zoznamServerov = "";
                 }
             }
+            cout << "DZL DEBUG: Po získaní zoznamu\n";
             zoznamServerov += "END|";
             user->odosliSpravu(zoznamServerov);
+            cout << "DZL DEBUG: Po odoslaní\n";
             if (i != 0) {
                 pomocna = user->primiSpravu();
                 cout << user->meno << ": " << pomocna << "\n";
                 stringstream check1(pomocna);
                 getline(check1, pomocna2, '|');
                 if (pomocna2.compare("JOI") == 0) {
-                    pripojeny = true;
                     int idServeru;
                     check1 >> idServeru;
-                    user->application->getServer(idServeru - 1)->pridajHraca(user);
+                    if (user->application->getServer(idServeru - 1)->getJePrazdny()) {
+                        user->application->getServer(idServeru - 1)->pridajHraca(user);
+                        pripojeny = true;
+                    } else {
+                        user->odosliSpravu("NO");
+                    }
                 }
             } else {
 
             }
+        } else {
+            return 0;
         }
     }
-    while(!user->koniec){
+    while(!user->koniec) {
         sleep(5);
     }
 }

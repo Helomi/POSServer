@@ -39,7 +39,7 @@ void *Server::pracuj(void *data) {
     cout << "Hráč sa pripojil zapíname hru!\n";
     server->hrac1->odosliSpravu("STR|" + to_string(server->mapa));
     server->hrac2->odosliSpravu("STR|" + to_string(server->mapa));
-    sleep(5);
+    sleep(2);
     server->hrac1->odosliSpravu("DTN|");
     bool koniecZapasu = false;
     while(!koniecZapasu) {
@@ -81,6 +81,12 @@ bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
                 hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));
             }
         }
+    } else {
+        hrac2->odosliSpravu("QUT");
+        hrac->odosliSpravu("QUT");
+        hrac2->setKoniec(true);
+        hrac->setKoniec(true);
+        return true;
     }
     server->obsadenePolicka++;
     return false;

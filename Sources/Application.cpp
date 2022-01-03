@@ -39,7 +39,7 @@ Application::Application(int argc, char *argv[]) {
     pthread_t* vlaknaUsers = new pthread_t[pocetUzivatelov];
     int newsockfd[pocetUzivatelov];
 
-    while (i != 2) {
+    while (i != 10) {
         newsockfd[i] = accept(sockfd, (struct sockaddr*)&cli_addr, &cli_len);
         if (newsockfd[i] < 0)
         {
@@ -57,7 +57,9 @@ Application::Application(int argc, char *argv[]) {
         pthread_join(vlaknaUsers[j], NULL);
         close(newsockfd[j]);
     }
-    pthread_join(vlaknaServer[0], NULL);
+    for (int j = 0; j < 6; ++j) {
+        pthread_join(vlaknaServer[j], NULL);
+    }
     close(sockfd);
     delete[] vlaknaUsers;
 }
@@ -69,7 +71,7 @@ bool Application::vytvorServer(string nazovServeru, int mapa, User* user) {
     {
         i++;
     }
-    if (i <= 0) {
+    if (i <= 4) {
         servery[i] = new Server(nazovServeru, mapa, user, &vlaknaServer[i]);
         servery[i]->zacniPracovat();
         return true;
@@ -92,10 +94,14 @@ Application::~Application() {
     for (int i = 0; i < pocetUzivatelov; ++i) {
         delete users[i];
     }
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 6; ++i) {
         delete servery[i];
     }
     delete[] vlaknaServer;
+}
+
+int Application::getPocetServerov() const {
+    return pocetServerov;
 }
 
 

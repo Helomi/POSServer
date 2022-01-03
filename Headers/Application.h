@@ -27,10 +27,15 @@ private:
     socklen_t cli_len;
     struct sockaddr_in serv_addr, cli_addr;
     int n;
-    Server* servery[2];
+    Server* servery[6];
     pthread_t* vlaknaServer = new pthread_t[10];
-    int pocetUzivatelov = 2;
-    User* users[2];
+    int pocetUzivatelov = 10;
+    int pocetServerov = 5;
+public:
+    int getPocetServerov() const;
+
+private:
+    User* users[10];
 
 public:
     Application(int argc, char *argv[]);
