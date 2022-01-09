@@ -30,14 +30,17 @@ private:
     int n;
     Application *application;
     pthread_t* vlakno;
+    bool koniec = false;
 
 public:
     User(int pnewsockfd, Application *pApplication, pthread_t *pVlakno);
+    ~User();
     void zacniPracovat();
     static void *pracuj(void *data);
-
+    void setKoniec(bool koniec);
     char *primiSpravu();
     void odosliSpravu(string sprava);
+    string getMeno();
 };
 
 

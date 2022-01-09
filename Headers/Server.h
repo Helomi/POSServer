@@ -13,7 +13,9 @@ using namespace std;
 class Server {
 private:
     string nazovServeru;
+    int obsadenePolicka;
     int mapa;
+    bool jePrazdny;
     char** pole;
     User* hrac1;
     User* hrac2;
@@ -26,6 +28,7 @@ public:
     void zacniPracovat();
     static void *pracuj(void *data);
     string getNazovServeru();
+    bool getJePrazdny();
     void pridajHraca(User* phrac2);
 };
 
