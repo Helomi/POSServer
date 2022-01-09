@@ -32,21 +32,31 @@ void Server::zacniPracovat() {
 
 void *Server::pracuj(void *data) {
     Server* server = (Server*) data;
-    while (server->hrac2 == nullptr) {
-        cout << "Čakám než sa pripojí ďalší hráč\n";
+    int i = 0;
+    while (server->hrac2 == nullptr && i <= 10) {
+        cout << server->nazovServeru << ": Čakám než sa pripojí ďalší hráč\n";
         sleep(5);
+        i++;
     }
-    cout << "Hráč sa pripojil zapíname hru!\n";
-    server->hrac1->odosliSpravu("STR|" + to_string(server->mapa));
-    server->hrac2->odosliSpravu("STR|" + to_string(server->mapa));
-    sleep(2);
-    server->hrac1->odosliSpravu("DTN|");
-    bool koniecZapasu = false;
-    while(!koniecZapasu) {
-        koniecZapasu = tah(server->hrac1, server->hrac2, server, 'O');
-        if (!koniecZapasu) {
-            koniecZapasu = tah(server->hrac2, server->hrac1, server, 'X');
+    if (i >= 10 && server->hrac2 == nullptr) {
+        server->hrac1->odosliSpravu("OOT");
+        cout << server->nazovServeru << ": Server uzavretý, vypršal čas na pripojenie 2. hráča\n";
+        server->hrac1->setKoniec(true);
+        server->jePrazdny = false;
+    } else {
+        cout << server->nazovServeru << ": Hráč sa pripojil zapíname hru!\n";
+        server->hrac1->odosliSpravu("STR|" + to_string(server->mapa));
+        server->hrac2->odosliSpravu("STR|" + to_string(server->mapa));
+        sleep(2);
+        server->hrac1->odosliSpravu("DTN|");
+        bool koniecZapasu = false;
+        while(!koniecZapasu) {
+            koniecZapasu = tah(server->hrac1, server->hrac2, server, 'O');
+            if (!koniecZapasu) {
+                koniecZapasu = tah(server->hrac2, server->hrac1, server, 'X');
+            }
         }
+
     }
 }
 
@@ -65,27 +75,21 @@ bool Server::tah(User *hrac, User *hrac2, Server *server, char znak) {
         y = stoi(pomocna2);
         server->pole[y][x] = znak;
         if (vyhral(x, y, server, znak)) {
-            hrac2->odosliSpravu("LOS|" + to_string(x) + "|" + to_string(y));
-            hrac->odosliSpravu("WIN");
-            hrac2->setKoniec(true);
-            hrac->setKoniec(true);
+            hrac2->odosliSpravu("LOS|" + to_string(x) + "|" + to_string(y)); // LOS - Prehra + posledný ťah súpera
+            hrac->odosliSpravu("WIN");// WIN - Výhra
             return true;
         } else {
             if (server->obsadenePolicka == (server->mapa * server->mapa)-1) {
-                hrac2->odosliSpravu("DRW|" + to_string(x) + "|" + to_string(y));
-                hrac->odosliSpravu("DRW");
-                hrac2->setKoniec(true);
-                hrac->setKoniec(true);
+                hrac2->odosliSpravu("DRW|" + to_string(x) + "|" + to_string(y)); // DRW - Draw (remíza)
+                hrac->odosliSpravu("DRW"); // DRW - Draw (remíza)
                 return true;
             } else {
-                hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y));
+                hrac2->odosliSpravu("DTU|" + to_string(x) + "|" + to_string(y)); // DTU - Daj ťah update
             }
         }
     } else {
         hrac2->odosliSpravu("QUT");
         hrac->odosliSpravu("QUT");
-        hrac2->setKoniec(true);
-        hrac->setKoniec(true);
         return true;
     }
     server->obsadenePolicka++;

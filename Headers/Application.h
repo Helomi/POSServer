@@ -22,26 +22,20 @@ class Server;
 
 class Application {
 private:
-    pthread_mutex_t serverPole;
+    pthread_mutex_t mutexServerPole;
     int sockfd;
     socklen_t cli_len;
     struct sockaddr_in serv_addr, cli_addr;
-    int n;
-    Server* servery[6];
+    Server* servery[5];
     pthread_t* vlaknaServer = new pthread_t[10];
-    int pocetUzivatelov = 10;
-    int pocetServerov = 5;
-public:
-    int getPocetServerov() const;
-
-private:
-    User* users[10];
+    User* users[2];
 
 public:
     Application(int argc, char *argv[]);
     ~Application();
     bool vytvorServer(string nazovServeru, int mapa, User* user);
     Server* getServer(int id);
+    int getPocetServerov() const;
 
 
 };
